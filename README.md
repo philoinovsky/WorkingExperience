@@ -5,16 +5,28 @@ Table of Content
 ├── #
 │   └── README.md
 ├── Backend
-│   └── DistributedSystems
-│       ├── Raft.md
-│       └── ZooKeeper.md
+│   ├── DistributedSystems
+│   │   ├── Raft.md
+│   │   └── ZooKeeper.md
+│   └── HTTP
+│       └── Cache.md
+├── Basics
+│   └── Git
+│       └── Git.md
+├── Foundations
+│   ├── ComputerNetworking
+│   │   └── ComputerNetworking.md
+│   └── OperatingSystem
+│       └── OperatingSystem.md
 ├── Language
 │   ├── C++
 │   │   └── C++.md
 │   ├── Golang
 │   │   └── Golang.md
-│   └── Python
-│       └── Python.md
+│   ├── Python
+│   │   └── Python.md
+│   └── Shell
+│       └── cmd.md
 ├── Middleware
 │   ├── Nginx
 │   │   └── Nginx.md
@@ -23,5 +35,5 @@ Table of Content
 ├── README.md
 └── update.sh
 
-10 directories, 10 files
+17 directories, 15 files
 ```
