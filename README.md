@@ -12,7 +12,8 @@ Table of Content
 │       └── Cache.md
 ├── Basics
 │   └── Git
-│       └── Git.md
+│       ├── Git.md
+│       └── GitLog.md
 ├── Foundations
 │   ├── ComputerNetworking
 │   │   └── ComputerNetworking.md
@@ -21,6 +22,7 @@ Table of Content
 ├── Language
 │   ├── C++
 │   │   └── C++.md
+│   ├── Comparison.md
 │   ├── Golang
 │   │   └── Golang.md
 │   ├── Python
@@ -35,5 +37,5 @@ Table of Content
 ├── README.md
 └── update.sh
 
-17 directories, 15 files
+17 directories, 17 files
 ```
