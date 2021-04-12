@@ -21,7 +21,8 @@ Table of Content
 │       └── OperatingSystem.md
 ├── Language
 │   ├── C++
-│   │   └── C++.md
+│   │   ├── C++.md
+│   │   └── a_tour_of_c++.md
 │   ├── Comparison.md
 │   ├── Golang
 │   │   └── Golang.md
@@ -37,5 +38,5 @@ Table of Content
 ├── README.md
 └── update.sh
 
-17 directories, 17 files
+17 directories, 18 files
 ```
