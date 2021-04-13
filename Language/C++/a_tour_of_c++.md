@@ -78,3 +78,13 @@ if (
 ```
 unique_copy(vec.begin(), vec.end(), back_inserter(res))
 ```
+2. stream iterators: can be used for `cout` `cin`
+## XI. Utilities
+1. `std::array` is `array` with size
+2. bitset, supports & |
+3. `mem_fn()` produces a function object that can be called as a nonmember function.
+4. for pair, consider `make_pair` for type deduction; for tuple, consider `make_tuple`
+## XIII. Concurrency
+1. task is a function/function object
+2. `future` get value, `promise` set value, `packaged_task` is the task
+3. `acync()` seperates the "call part" of a function call from the "get result" part. Using async, dont think about threads and locks. Instead, you think just in terms of tasks that potentially compute their results asynchronously.
