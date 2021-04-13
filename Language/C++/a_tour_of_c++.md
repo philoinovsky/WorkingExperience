@@ -27,3 +27,54 @@ compiler will produce code that once constructing `a` throws error, the destruct
 - function argument
 - function return value
 - exception
+## V. Templates
+### Parameterized Types
+```
+template<typename T>
+```
+### Concepts and Generic Programming
+1. the ability to pass types
+2. delayed type checking (happends at instantiation time)
+3. ability to pass constant values as arguments, implying compile-time computation
+### Function Objects
+the class defined `()` operator
+### Variadic Template
+```
+void f() {}
+template<typename T, typename... Tail>
+void f(T head, Tail... tail)
+{
+    g(head);
+    f(tail...);
+}
+```
+dont use it for homogeneous argument lists (prefer initializer lists)
+## VII. IO Streams
+### I/O of User-Defined Types
+```
+istream& operator >> (istream& is, Entry &e) {
+    // ...
+    // success: return is;
+    // fail: is.setstate(ios_base::failbit);
+    //      return is;
+}
+```
+### stringstream
+can be used to convert different types of objects
+```
+stringstream interpreter;
+if (
+    !(interpreter << arg)
+    || !(interpreter >> result)
+    || !(interpreter >> std::ws).eof()
+) throw runtime_error("failed");
+```
+## VIII. Containers
+1. `vector` faster than `list` (consecutive memory layout)
+2. use `at()` when you need guaranteed range checks
+3. use `forward_list` for sequence that are usually empty (optimized for empty sequence, just one word)
+## IX. Algorithms
+1. `back_inserter(res)` constructs an iterator for `res` that adds elements at the end of a container
+```
+unique_copy(vec.begin(), vec.end(), back_inserter(res))
+```
