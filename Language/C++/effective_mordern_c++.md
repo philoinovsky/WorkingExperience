@@ -1,5 +1,5 @@
 # Effective Mordern C++
-## Deducing Types
+## Chapter 1: Deducing Types
 ### I. Understand Template Type Deduction
 passed param type -> T, param type in function
 ```
@@ -49,4 +49,22 @@ same as array, normal pass as decayed funciton poiter, but can pass by reference
 1. same as template type deduction, except that `auto` regards `initializer_list<>` as it is, while template type deduction does not.
 2. when use `auto` as function return types or lambda arguments, `auto` implies template type deduction.
 ### III. Understand `decltype`
+1. `decltype` typically parrots back the exact type of the name or expression you give it.
+2. primary use of `decltype` is declaring function templates where the function's return type depends on its parameter types.
+3. trailing return type
+```
+auto f(...) -> decltype(c[i]) // returns c[i]'s type // c++ 11
+```
+4. c++14
+```
+template<...>
+decltype(auto) f(...)
+```
+5. support both lvalue and rvalue arguments by using `forward<T>`
+#### ToR
+1. for lvalue expressions of type T other than names, `decltype` always reports a type of `T&`
+### IV. Know how to view deduced types
+1. IDE - not precise sometimes
+2. boost.typeindex
+## Chapter 2: auto
 
