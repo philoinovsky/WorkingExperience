@@ -68,7 +68,9 @@ decltype(auto) f(...)
 2. boost.typeindex
 ## Chapter 2: auto
 ### V. prefer `auto` to explicit type declarations
+- TODO
 ### VI. use the explicitly typed initializer idiom when `auto` deduces undesired types
+- TODO
 ## Chapter 3: Moving to Modern C++
 ### VII. distinguish between `()` and `{}` when creating objects
 ```
@@ -79,6 +81,26 @@ int z{0}; int z = {0}; // initializer using braces
 1. uncopiable objects cannot be initialized with `=`
 2. cannot use `()` in class definition
 3. `{}` is called `uniform` because only it can be used everywhere.
-
-
-
+#### ToR
+1. braced initialization is the most widely usable. And it's immune to C++'s most vexing parse. (i.e. `Widget w2()` is function or initialization)
+2. during constructor overload, `{}` are matched to `std::initializer_list` parameters if at all possible, even if other constructors offer seemingly better matches
+3. choosing between `()` and `{}` for object creation inside templates can be challenging
+### VIII. Prefer `nullptr` to `0` and `NULL`
+avoid overloading on integral and pointer types.
+### IX. Prefer alias declarations (`using`) to `typedef`
+#### ToR
+1. `typedef`s dont support templatization, but alias declaration do
+2. alias templates avoid the "::type" suffix and, in templates, the "typename" prefix often required to refer to `typedef`s
+3. C++14 offers alias templates for all the C++11 type traits transformation
+### X. Prefer scoped enums to unscoped enums
+- scoped enum: `enum class Color {black, white, red}`
+- unscoped enum: `enum Color {black, white, red}`
+#### ToR
+1. both scoped and unscoped `enums` support specification of the underlying type. The default underlying type for scoped `enum`s is `int`. Unscoped have no default undelying type.
+2. scoped `enum`s may always be forward-declared. Unscoped `enum`s may be forward-declared only if their declaration specifies an underlying type.
+### XI. Prefer deleted functions to private undefined ones
+any function may be deleted, including non-member functions and template instantiations
+### XII. Declare overriding functions `override`
+member function reference qualifiers make it possible to treat lvalue and rvalue objects (*this) differently
+### XIII. Prefer `const_iterators` to `iterator`
+- TODO
