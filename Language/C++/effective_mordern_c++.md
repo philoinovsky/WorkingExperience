@@ -67,4 +67,18 @@ decltype(auto) f(...)
 1. IDE - not precise sometimes
 2. boost.typeindex
 ## Chapter 2: auto
+### V. prefer `auto` to explicit type declarations
+### VI. use the explicitly typed initializer idiom when `auto` deduces undesired types
+## Chapter 3: Moving to Modern C++
+### VII. distinguish between `()` and `{}` when creating objects
+```
+int x(0); // parentheses
+int y = 0; // =
+int z{0}; int z = {0}; // initializer using braces
+```
+1. uncopiable objects cannot be initialized with `=`
+2. cannot use `()` in class definition
+3. `{}` is called `uniform` because only it can be used everywhere.
+
+
 
