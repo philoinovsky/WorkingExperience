@@ -178,3 +178,31 @@ member function reference qualifiers make it possible to treat lvalue and rvalue
 1. apply `std::move` to rvalue references and `std::forward` to universal references the last time each is used.
 2. do the same thing for rvalue references and universal references being returned from functions that return by value.
 3. never apply `std::move` or `std::forward` to local objects if they would otherwise be pligible for the return value optimization.
+### 26. Avoid overloading on universal references
+1. overloading on universal references almost always leads to the universal reference overload being called more frequently than expected
+2. perfect-forwarding constructors are especially problematic, because they're typically better matches than copy constructors for non-const lvalues, and they can hijack derived class calls to base class copy and move constructors
+### 27. Familiarize yourself with alternatives to overloading on universal references
+#### A. Abandon overloading
+create functions for different types
+#### B. Pass by `const T&`
+#### C. Pass by value
+can dial up performance without any increase in complexity
+#### D. Use Tag dispatch
+more parameters to make desired function matchable
+#### E. Constraining templates that take universal references
+1. `enabled_if_t` to conditionally enable the template initialization
+2. `is_base_of::value` to enable template initialization for all subclass
+3. maybe use `is_integral` or anything you need to partially disable the template initialization
+4. use `decat_t` to remove references and `const` `volatile`
+5. SFINAE
+#### F. Trade-offs
+1. ABC specify a type for each parameter in the function to be called
+2. DE use perfect forwarding, hence dont specify types for the parameters. 
+3. This fundamental decision - to specify a type or not - has consequences
+### ToR
+1. alternatives to the combination of universal references and overloading include the use of distinct function names, pass parameters by lvalue-reference-to-const, passing parameters by value, and using tag dispatch
+2. constraining templates via `std::enable_if` permits the use of universal references and overloading together, but it controls the conditions under which compilers may use the universal reference overloads
+3. universal reference parameters often have efficiency advantages, but they typically have usability disadvantages.
+### 28. Understand reference collapsing
+only && and && makes &&, the rest makes &
+### 29. Assume that move operations are not present , not cheap, and not used
