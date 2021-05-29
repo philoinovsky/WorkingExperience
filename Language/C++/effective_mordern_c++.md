@@ -206,3 +206,6 @@ more parameters to make desired function matchable
 ### 28. Understand reference collapsing
 only && and && makes &&, the rest makes &
 ### 29. Assume that move operations are not present , not cheap, and not used
+1. assume that move operations are not present, not cheap, and not used (e.g. when you writing templates, better be conservative)
+2. in code with known types or support for move semantics, there is no need for assumptions
+### 30. Familiarize yourself with perfect forwarding failure cases
