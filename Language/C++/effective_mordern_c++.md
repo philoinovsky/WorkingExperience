@@ -165,3 +165,16 @@ member function reference qualifiers make it possible to treat lvalue and rvalue
 3. the above advice applies to `std::unique_ptr`, but not to `std::shared_ptr`, which stems from the differing ways these smart pointers support custom deleters.
 ## Chapter 5: Rvalue References, Move Semantics, and Perfect Forwarding
 ### 23. Understand `std::move` and `std::forward`
+1. `std::move` performs an unconditional cast to an rvalue. In and of itself, it doesnt move anything
+2. `std::forward` casts its argument to an rvalue only if that argument is bound to an rvalue
+3. neither `std::move` nor `std::forward` do anything at run time
+4. all function parameters are lvalue. `forward` forwards based on the information encoded in `T`
+### 24. Distinguish universal references from rvalue references
+1. it must be precisely `T&&`
+2. if a function template parameter has type `T&&` for a deduced type `T`, or if an object is declared using `auto&&`, the parameter or object is a universal reference
+3. if the form of the type declaration isn't precisely `type&&`, or if type deduction does not occur, `type&&` denotes an rvalue reference
+4. universal references correspond to rvalue references if they are initialized with rvalues. They correspond to lvalue references if they're initialized with lvalues.
+### 25. use `std::move` on rvalue references, `std::forward` on universal references
+1. apply `std::move` to rvalue references and `std::forward` to universal references the last time each is used.
+2. do the same thing for rvalue references and universal references being returned from functions that return by value.
+3. never apply `std::move` or `std::forward` to local objects if they would otherwise be pligible for the return value optimization.
