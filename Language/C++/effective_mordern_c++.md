@@ -135,3 +135,22 @@ member function reference qualifiers make it possible to treat lvalue and rvalue
 7. destructor: `noexcept` by default
 ## Chapter 4: Smart Pointers
 ### 18. Use `std::unique_ptr` for exclusive-ownership resource management
+1. `unique_ptr` is a small, fast, move-only smart pointer for managing resources with exclusive-ownership semantics
+2. by default, resource destruction takes place via `delete`, but custom deleters can be specified. Stateful deleters and function pointers as deleters increase the size of `std::unique_ptr` objects
+3. converting a `std::unique_ptr` to a `std::shared_ptr` is easy
+### 19. Use `std::shared_ptr` for shared-ownership resource management
+1. `std::shared_ptr`s offers convenience approaching that of garbage collection for the shared lifetime management of arbitrary resources
+2. `std::shared_ptr` are typically twice as big (count + ptr), incur overhead for control blocks, and require atomic reference count manipulations
+3. default resource destruction is via `delete`, but custom deleters are supported. The type of the deleter has no effect on the type of the `std::shared_ptr`
+#### A. Control Block
+1. `make_shared` creates the control block and pointer at the same allocation, but the `weak_ptr` may prevent the control from being deleted
+2. a control block is created when a `std::shared_ptr` is constructed from a unique-ownership pointer (`unique_ptr` or `auto_ptr`) 
+3. when a `shared_ptr` constructor is called with a raw pointer, it creates a control block
+4. if you want to create a `shared_ptr` from an object that already had a control block, you'd presumably pass a `shared_ptr` or a `weak_ptr` as a constructor argument, not a raw pointer.
+5. if one created multiple control block from one raw pointer, they will release the resource multiple times, which leads to UB.
+### 20. Use `std::weak_ptr` for `std::shared_ptr`-like pointers that can dangle
+1. `weak_ptr` is an augmentation of `shared_ptr`, but it wont increase the count.
+2. potential use cases for `std::weak_ptr` include caching (`unordered_map<ID, weak_ptr>`), observer lists (notify observer, but not interested in observer's lifetime), and the prevention of `std::shared_ptr` cycles (cyclic dependencies so all shared pointers won't be released).
+3. use `weak_ptr::expired()` to check if it's dangling
+4. `weak_ptr::lock()` returns `shared_ptr` if not dangling, returns null otherwise.
+### 21. Prefer `std::make_unique` and `std::make_shared` to direct use of new
