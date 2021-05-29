@@ -154,3 +154,14 @@ member function reference qualifiers make it possible to treat lvalue and rvalue
 3. use `weak_ptr::expired()` to check if it's dangling
 4. `weak_ptr::lock()` returns `shared_ptr` if not dangling, returns null otherwise.
 ### 21. Prefer `std::make_unique` and `std::make_shared` to direct use of new
+1. `shared_ptr(new xx)` consists of two steps: a. new object; b. create shared pointer, which may cause resource leak (if reordered and have exception in between) if directly use in function argument
+2. `make_shared` make shared pointer in one step
+3. `make` functions eliminate source code duplication, improve exception safety, and, for `std::make_shared` and `std::allocate_shared`, generate code that's smaller and faster
+4. situations where use of `make` functions is inappropriate include the need to specify custom deleters and a desire to pass braced initializers.
+5. for `std::shared_ptr`s, additional situations where `make` functinos may be ill-advised include a. classses with custom memory management and b. systems with memory concerns, very large objects, and `std::weak_ptr`s that outlive the corresponding `std::shared_ptr`s
+### 22. When using the `Pimpl` idiom, define special member functions in the implementation file
+1. the pimpl idiom decreases build times by reducing compilation dependencies between class clients and class implementations
+2. for `std::unique_ptr` `pImpl` pointers, declare special member functions in the class header, but implement them in the implementation file. Do this even if the default function implementations are acceptable
+3. the above advice applies to `std::unique_ptr`, but not to `std::shared_ptr`, which stems from the differing ways these smart pointers support custom deleters.
+## Chapter 5: Rvalue References, Move Semantics, and Perfect Forwarding
+### 23. Understand `std::move` and `std::forward`
