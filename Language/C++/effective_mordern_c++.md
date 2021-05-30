@@ -209,3 +209,16 @@ only && and && makes &&, the rest makes &
 1. assume that move operations are not present, not cheap, and not used (e.g. when you writing templates, better be conservative)
 2. in code with known types or support for move semantics, there is no need for assumptions
 ### 30. Familiarize yourself with perfect forwarding failure cases
+1. braced initializers: then calling `fwd({1, 2, 3})`, the `{1, 2, 3}` is not declared to be a `initializer_list`, so it is a `non_deduced context` in template initialization
+2. `0` or `NULL` as null pointers -> will be recognized as integral
+3. Declaration-only integral `static const` data members: when `static const` member variable is declared but not defined, compiler wont allocate memory for it. So during function template initialization, it cannot be referred (reference and pointer use same mechanism). It can be solved by creating definition in `.cpp` file, but which cannot repeat the initializer.
+4. Overloaded function names and template names: when functions are overloaded, compiler doesn't know which one you want to forward, doesnt know which template instance you want to forward.
+5. Bitfields: since it's arbitrary bit range, it cannot be referenced. But you can fix this by passing only the integral value.
+## Chapter 6: Lambda Expressions
+### 31. Avoid Default Capture Modes
+1. default by-reference capture can lead to dangling references (i.e. lambda outlives the referenced variable)
+2. default by-value capture is susceptible to dangling pointer (especially `this`), and it misleadingly suggests that lambdas are self-contained
+3. `static` members cannot be captures, they are references inside lambda.
+### 32. Use init capture to move objects into closures
+
+
