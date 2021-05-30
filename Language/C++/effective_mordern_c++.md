@@ -228,6 +228,30 @@ only && and && makes &&, the rest makes &
 2. in C++11 only, `std::bind` may be useful for implementing move capture or for binding objects with templatized function call operators
 ## Chapter 7: The Concurrency API
 ### 35. Prefer task-based programming to thread-based
-
+#### A. cases to use thread-based programming
+1. you need access to the API of the underlying threading implementation
+2. you need to and are able to optimize thread usage for your application
+3. you need to implement threading technology beyond the C++ concurrency API
+#### B. oversubscription
+1. happends when there are more ready-to-run software threads than hardware threads.
+2. when software thread is scheduled on a different core than last time it was, a. CPU caches are cold, b. it pollutes the cache for old threads
+#### C. Advantage of task
+1. state-of-the-art thread schedulers employ system-wide thread pools to avoid over-subscription, and they improve load lbalancing across hardware cores through work-stealing algorithm. 
+2. if you take a task=based approach you already reap the benefits
 #### ToR
 1. `std::thread` cannot get result
+2. thread-based programming calls for manual management of thread exhaustion, oversubscription, load balancing, and adaptation to new platforms.
+3. task-based programming via `std::async` with the default launch policy handles most of these issues for you
+### 36. Specify `std::launch::async` if asynchronnicity is essential
+#### A. async policies
+1. `std::launch::async`: the true async
+2. `std::launch::deferred`: runs syncly only when `get` or `wait` is called, otherwise never executes
+3. default policy: mix of above for the purpose of avoiding oversubscription, load balancing, thread construction/destruction.
+#### B. using `std::async` you cannot predict
+1. whether `f` will run concurrently with `t`
+2. whether `f` runs on a thread different from the thread invoking `get` or  `wait` or `fut`
+3. whether `f` runs
+#### C. what it affects
+1. cannot predict which thread's TLS (thread-local storage) will be accessed
+2. `wait`-based loops may never finish
+### 37. Make `std::threads` unjoinable on all paths
