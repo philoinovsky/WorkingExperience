@@ -220,5 +220,14 @@ only && and && makes &&, the rest makes &
 2. default by-value capture is susceptible to dangling pointer (especially `this`), and it misleadingly suggests that lambdas are self-contained
 3. `static` members cannot be captures, they are references inside lambda.
 ### 32. Use init capture to move objects into closures
+1. use C++14's init capture to move objects into closures
+2. in C++11, emulate init capture via hand-written classes or `std::bind`
+### 33. Use `decltype` on `auto&&` parameters to `std::forward` them
+### 34. Prefer lambdas to `std::bind`
+1. lambdas are more readable, more expensive, and may be more efficient than using `std::bind`
+2. in C++11 only, `std::bind` may be useful for implementing move capture or for binding objects with templatized function call operators
+## Chapter 7: The Concurrency API
+### 35. Prefer task-based programming to thread-based
 
-
+#### ToR
+1. `std::thread` cannot get result
