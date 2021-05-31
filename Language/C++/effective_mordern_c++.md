@@ -254,4 +254,9 @@ only && and && makes &&, the rest makes &
 #### C. what it affects
 1. cannot predict which thread's TLS (thread-local storage) will be accessed
 2. `wait`-based loops may never finish
-### 37. Make `std::threads` unjoinable on all paths
+### 37. Make `std::threads` unjoinable on all paths - REREAD
+1. make `std::thread`s unjoinable on all paths
+2. `join`-on-destruction can lead to difficult-to-debug performance anomalies
+3. `detach`-on-destruction can lead to difficult-to-debug undefined behavior
+4. declare `std::thread` objects last in lists of data members
+### 38. Be aware of varying thread handle destructor behavior
