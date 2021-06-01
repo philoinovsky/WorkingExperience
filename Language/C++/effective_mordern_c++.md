@@ -260,3 +260,30 @@ only && and && makes &&, the rest makes &
 3. `detach`-on-destruction can lead to difficult-to-debug undefined behavior
 4. declare `std::thread` objects last in lists of data members
 ### 38. Be aware of varying thread handle destructor behavior
+1. future destructors normally just destroy the future's data members
+2. the final future referring to a shared state for a non-deferred task launched via `std::async` blocks until the task completes
+#### A. one lone exception
+- arises when all below applies
+    - it refers to a shared state that was created due to a call to `std::async`
+    - the task's launch policy is `std::launch::async`, either because that was chosen by runtime system or because it was specified
+    - the future is the last future referring to the shared state
+- the behavior: block until the async running task completes
+### 39. Consider `void` futures for one-shot event communication
+#### A. normal way of wait-notify
+1. use conditional variable, issues (a. lost-wakeup; b. spurious wakeup)
+2. use a flag/atomic int (semaphore actually) to address this issue
+#### B. neat way - future
+1. void future
+2. set first join later, dont dtoraction::join, because if exception in midway, the function would hang
+### 40. use `std::atomic` for concurrency, `volatile` for special memory
+1. `std::atomic` is for data accessed from multiple threads without using mutexes. It's a tool for writing concurrent software.
+2. `volatile` is for memory where reads and writes should not be optimized away. It's a tool for working with special memory
+#### A. use
+1. atomic is used against compiler/hardware reordering, no code in the source code precedes a write of `std::atomic` variable may take place afterwards.
+2. volatile is used against compiler dead load/store elimination
+#### B. note: implementation of `atomic` operations
+1. bus lock: lock the whole bus, all CPU cores cannot access memory if one core is doing amotic operation
+2. cacheline lock: invalidate all core's corresponding cacheline by lock it. Afterwards it writeback and validate it.
+## Chapter 8
+### 41. Consider pass by value for copyable parameters that are cheap to move and always copied
+### 42. Consider emplacement instead of insertion
