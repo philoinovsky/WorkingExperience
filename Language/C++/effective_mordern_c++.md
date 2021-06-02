@@ -290,3 +290,10 @@ only && and && makes &&, the rest makes &
 2. copying parameters via construction may be significant more expensive than copying them via assignement
 3. pass by value is subject to the slicing problem, so it's typically inappropriate for base class parameter types
 ### 42. Consider emplacement instead of insertion
+#### A. if all the followings are true, emplacement will almost certainly outperform insertion
+1. the value being added is constructed into the container, not assigned
+2. the argument type(s) being passed differ from the type held by the container
+3. the container is unlikely to reject the new value as a duplicate
+#### ToR
+1. in principle, emplacement functions should sometimes more efficient than their insertion counterparts, and they should never be less efficient
+2. emplacement functions may perform type conversions that would be rejected by insertion functions.
