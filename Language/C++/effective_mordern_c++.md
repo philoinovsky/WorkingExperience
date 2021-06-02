@@ -286,4 +286,7 @@ only && and && makes &&, the rest makes &
 2. cacheline lock: invalidate all core's corresponding cacheline by lock it. Afterwards it writeback and validate it.
 ## Chapter 8
 ### 41. Consider pass by value for copyable parameters that are cheap to move and always copied
+1. for copyable, cheap-to-move parameters that are always copied, pass by value may be nearly as efficient as pass by reference, it's easier to implement, and it can generate less object code
+2. copying parameters via construction may be significant more expensive than copying them via assignement
+3. pass by value is subject to the slicing problem, so it's typically inappropriate for base class parameter types
 ### 42. Consider emplacement instead of insertion
