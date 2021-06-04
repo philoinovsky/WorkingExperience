@@ -145,5 +145,99 @@ the distinctions between RISC and CISC, PC's and mainframes, and between simple 
 - one clock cycle if the source is an arithmetic expression
 - no extra time for the rest, no overflow checking
 #### C. floating point precision conversion
+- no cost if floating point register stack is used
+- it takes between 2 and 15 clock cycles when the XMM registers are used
 #### D. integer to float conversion
+- conversion of a signed integer to a `float` or `double` takes 4 ~ 16 clock cycles
+- conversion of an unsigned integer takes longer time unless the AVX512 instruction set is enabled
 #### E. float to integer conversion
+- takes a very long time unless the SSE2 or later instruction set is enabled
+- typically, the conversion takes 50 ~ 100 clock cycles
+##### tips
+- avoid the conversions by using different types of variables
+- move the conversion out of the innermost loop by storing intermediate results as floating point
+- use 64-bit mode or enable the SSE2 instruction set
+- use rounding instead of truncation and make a round function using assembly language (?)
+#### F. pointer type conversion
+- no cost
+#### G. re-interpreting the type of an object
+```
+float x;
+*(int *)&x |= 0x80000000; // set sign bit of x
+```
+- disadvantage: force compiler to store x in memory rather than in a register (why?)
+##### dangers when type-casting pointers
+- the trick voilates the strict aliasing rule of standard C, specifying that two pointers of different types cannot point to the same object
+- trick will fail if the object is treated as bigger than it actually is (when `size of int` != `size of float`)
+- if you access part of a variable, for example 32 bits of 64 bits varaible, the code will not be portable to platforms that use big endian storage
+- if you access a variable in parts, the code is likely to execute slower than intended because of a store forwarding delay in the CPU
+#### H. const cast
+- no cost
+#### I. static cast
+- no cost, C style
+#### J. reinterpret cast
+- no cost, C style casting with a little more syntax check
+#### K. dynamic cast
+- used to convert pointer to class
+- runtime check validity of conversion, slower but safer
+#### L. converting class objects
+- are possible only if the programmer has defined a constructor, and overloaded assignment operator, or an overloaded type casting operator that specifies how to do the conversion
+### XII. Branches and switch statements
+#### A. branch
+- 0 ~ 2 if predicted
+- 12 ~ 25 if mispredicted
+#### B. switch
+- small sequence: jump table
+- large far sequence: binary search on sorted value-func pair (book say branch tree, not right)
+#### C. target branch buffer
+- for branch and function calls
+- contention occurs if a program has many branches or function calls
+- contentions reduce predicted rate
+#### D. optimization
+- can replace a poorly predictable branch by a table lookup
+### XIII. Loops
+- a loop with a small and fixed repeat count and no branches inside can be predicted perfectly
+#### A. loop unrolling
+- advantage:
+    - eliminate `if` branch
+- disadvantage:
+    - take up more space in the `code cache`
+    - dont do unrolling when `lookback buffer` is utilizable, or processors having a micro-op cache
+    - repeat count cannot be divided
+#### B. loop control condition
+- compare to 0 is more efficient, when `i` is not used as index, write `i = N - 1; i >= 0; i--` instead of `i = 0; i < N; i++`; when `i` is used as array index, still forward, cuz data cache is optimzied for array forwards
+- loop counter should preferably be an integer, integer comparison is cheaper than float comparison
+- faster to use `memset` and `memcpy`, no index addressing, no index increment/decrement
+### XVI. functions
+- may slow down a program for the following reasons
+    - makes the microprocessor jump to a different code address and back, ~4 clock cycles
+    - code cache works less efficiently
+    - params may be passed by stack
+    - extra time is needed for setting up a stack frame, saving and restoring registers, and possibly save exception handling information
+    - function call occupies space in BTB
+#### A. avoid unnecessary functions
+- focus on logic not length of function
+#### B. use inline functions
+#### C. avoid nested function calls in the innermost loop
+#### D. use macros instead of functions
+- it's inline
+- note
+    - the same expression will be evaluate for every use in macro
+    - name should be long and unique
+#### E. use fastcall and vectorcall functions
+- `__fastcall` use under 32-bit mode to pass first 2 params by register
+- `__vectorcall` changes the function calling method in Windows system for floating point and vector operands so that parameters are passed and returned in vector registers
+#### F. make functions local
+- make it easier for compiler to inline the function and to optimize across function calls
+- ways
+    - add keyword `static` to the function declaration, but cannot use for class member function (different meaning)
+    - put the function or class into an anonymous namespace
+    - gnu compilers allows `__attribute__((visibility("hidden")))`
+#### G. use whole program optimization
+- use compiler option to make only one final object file, so compiler can optimize better
+- cannot be used for function libraries distributed as object or library files
+#### H. use 64-bit mode
+- windows: passed by 4 registers regardless of integer/floating point
+- linux: can pass by 6 integer register + 8 floating point register
+- on 32-bit mode, same
+### XV. function parameters
