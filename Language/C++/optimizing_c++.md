@@ -106,3 +106,44 @@ the distinctions between RISC and CISC, PC's and mainframes, and between simple 
 #### C. boolean vector operations
 - an integer may be used as a Boolean vector, only 1 cycle
 ### VI. Pointers and references
+#### A. pointers vs references
+- equally efficient because they are in fact doing the same thing
+- advantages of pointers over references
+    - pointers are more clear, you dont know reference is reference
+    - pointer can do arithmetic operations
+- disadvantages of pointers over references
+    - syntax simpler
+    - references are safer because they are sure to point to a valid address
+    - references are useful for copy constructors and overloaded operators
+    - function parameters that are declared as constant references accept expressions as arguments while pointers and non-constant references require a variable
+#### B. efficiency
+- fast because dedicated optimizations
+- disadvantages
+    - requires an extra register to hold the value of value of the pointer / reference
+    - value of the pointer is needed a few clock cycles before the time the variable pointed to can be accessed
+#### C. pointer arithmetic
+- the object pointed to can be accessed approx 2 clock cycles after the value of the pointer has been calculated
+### VII. function pointers
+- calling a function through a function pointer may take a few clock cycles more than calling the function directly if the traget address can be predicted
+- target address is predicted if the value of the function pointer is the same as last time the statement was executed
+### VIII. member pointers
+- data member stores the offset of a data member relative to the beginning of the object
+- member function is simply the address of the member function
+- a compiler has to use the most complicated implementation of the member pointers if it has incomplete information about the class that the member pointer refers
+- use compiler option to generate simplist class layout
+### IX. smart pointers
+- no extra cost to accessing an object through a smart pointer, but there is an extra cost whenever a smart pointer is created, deleted, copied, or transferred from one function to another
+- smart pointers can be useful in the situation where the logical structure of a program dictates that an object must be dynamically created by one function and later deleted by another function and these two functions are unrelated to each other
+- if a program uses many small dynamically allocated objects with each their smart pointer then you may consider if the cost of this solution is too high
+### X. arrays
+- size of all but the first dimension may preferably be a power of 2 if rows are indexed in a non-sequential order in order to make the address calculation more efficient
+### XI. type conversions
+#### A. signed/unsigned conversion
+- no checking for overflow
+- takes no time
+#### B. integer size conversion
+- one clock cycle if the source is an arithmetic expression
+- no extra time for the rest, no overflow checking
+#### C. floating point precision conversion
+#### D. integer to float conversion
+#### E. float to integer conversion
