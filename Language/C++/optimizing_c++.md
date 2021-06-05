@@ -348,3 +348,30 @@ x.abc = A | (B << 4) | (C << 6);
 - `#if` can be used for multiple platform/config
 ### XXXVI. namespaces
 - no cost
+## Optimizations in the compiler
+### I. how compilers optimize
+- function inlining
+- constant folding and constant propagation
+    - compile-time calculation
+- pointer elimination
+    - pointer or reference can be eliminated if the target is known
+- common subexpression elimination
+- live range analysis
+    - register allocation
+- join identical branches
+- eliminate jumps
+    - put `return` early
+    - branch can be eliminated if always `true/false`, known from previous branch
+- loop unrolling
+- loop invariant code motion
+- induction variables in loop
+- scheduling (similer to out-of-order execution)
+    - modern cpus are able to reorder instructions without help of the compiler
+    - compiler can make it easier for cpu
+- algebraic reduction
+- devirtualization
+    - bypass the virtual table lookup if it's known which version of the virtual function is needed
+### II. comparison between compilers
+### III. obstacles to optimization by compiler
+- cannot optimize across modules
+- pointer aliasing
