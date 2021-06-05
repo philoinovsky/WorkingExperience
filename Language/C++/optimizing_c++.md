@@ -43,6 +43,7 @@ the distinctions between RISC and CISC, PC's and mainframes, and between simple 
 #### volatile
 - wont optimize dead load/store elimination for volatile variables
 - does not mean atomic
+- prevents compiler from storing it to register
 #### thread-local storage
 - keyword `thread_local`, `__thread` or `__declspec(thread)`
 - accessed through a pointer stored in a thread environment block
@@ -208,7 +209,7 @@ float x;
 - compare to 0 is more efficient, when `i` is not used as index, write `i = N - 1; i >= 0; i--` instead of `i = 0; i < N; i++`; when `i` is used as array index, still forward, cuz data cache is optimzied for array forwards
 - loop counter should preferably be an integer, integer comparison is cheaper than float comparison
 - faster to use `memset` and `memcpy`, no index addressing, no index increment/decrement
-### XVI. functions
+### XIV. functions
 - may slow down a program for the following reasons
     - makes the microprocessor jump to a different code address and back, ~4 clock cycles
     - code cache works less efficiently
@@ -241,3 +242,109 @@ float x;
 - linux: can pass by 6 integer register + 8 floating point register
 - on 32-bit mode, same
 ### XV. function parameters
+- params can be passed via register if all following conditions are met, if not met, better pass by pointer of object.
+    - object is small enough to fit into a single register
+    - has no copy constructor and no desctructor. otherwise need to copy when call, destruct when return
+    - no virtual member
+    - does not use run type type identification (RTTI)
+- the preferred methods for transferring composite objects to a function
+    - pass by a const reference, it accepts rvalue!
+    - make the function a member of the object's class or structure
+### XVI. function return types
+- return type should preferably be a simple type, a pointer, a reference, or void
+- objects of a composite type can be returned in registers only in the simplest cases: calling conventions for different C++ compilers and operating systems
+- except for the simplest cases, composite objects are returned by copying them into a place indicated by the caller through a hidden pointer. The copy constructor, if any, is usually called in the copy process, and the destructor is called when the original is destroyed.
+- instead of returning a composite object, you may consider the following alternatives
+    - make the function a constructor for the object
+    - make the function modify an existing object rather than making a new one
+    - make the function return a pointer or reference to a static object defined inside the function. This is efficient, but risky.
+    - make the function construct an object with `new` and return a pointer to it. Inefficient because of the costs of dynamic memory allocation.
+### XVII. function tail calls
+- if the last statement of a function is a call to another function, the compiler can replace the call by a jump to the second funcition (use same stack space!!!)
+### XVIII. recursive functions
+- deep recursion makes the prediction of return addresses less efficient (see `return stack buffer` in manual 3) #TODO
+- recursive tail calls are more efficient than other recursive calls, but still less efficient than a loop
+### XIX. structures and classes
+- advantages
+    - variables that are used together are also stored together
+    - variables that are members of a class need not be passed as params
+- disadvantages
+    - inefficient to dividing code into too many small classes
+    - overhead of transfer `this` pointer (time, it takes up one register)
+    - virtual members are less efficient
+### XX. class data members
+- data members stored consecutively in the order in which they are declared (in struct yes, in class is it? `inside c++ object model` said not #TODO)
+- align in a way that the data members are most compact
+- put big arrays and other big objects last in a structure/class
+### XXI. class member functions (methods)
+- calling a member function is as fast as calling a simple function
+- static function doesnt need `this` pointer, thus it's faster
+### XXII. virtual member functions
+- the time it takes to call a virtual member function is a few clock cycles more than it take to call a non-virtual member function, provided the function call statement always calls the same version of the virtual function.
+- the ruls for prediction and misprediction of virtual function is the same as for switch statements
+- runtime polymorphism is needed only if it cannot be known at compile time which version of a polymorphic member function is called
+- if used in critical part: a. use without polymorphism; b. compile-time polymorphism
+- use template instead if polymorphism whenever possible
+### XXIII. runtime type identification (RTTI)
+- adds extra information to all class objects and it's not efficient, if compiler has an option for RTTI then turn it off
+### XXIV. inheritance
+- there may be a degradation in code caching and data caching for the following reasons
+    - child class includes all data members of the parant class
+    - size of the parant class data member is added to the offset of the child class members
+    - member functions of parant and child are possibly stored in different modules
+- inheritance from multiple parant classes in the same generation can cause complications with member pointers and virtual functions of when accessing an object of a derived class through a pointer to one of the base classes.
+### XXV. constructors and destructors
+- as efficient as others
+### XXVI. unions
+- data members share the same memory space
+### XXVII. bitfields
+- it's faster to compose a bitfield by the use of `<<` and `|` operations
+```
+Union Bitfield {
+    struct {
+        int a:4;
+        int b:2;
+        int c:2;
+    }
+    char abc;
+}
+Bitfield x;
+int A, B, C;
+x.abc = A | (B << 4) | (C << 6);
+```
+### XXVIII. overloaded functions
+- simply treated as different functions
+### XXIX. overloaded operators
+- overloaded operator is equivalent to a function
+- an expression with multiple overloaded operators will cause the creation of temporary objects for intermediate results, which may be undesired. Compiler can optimize simple cases
+### XXX. templates
+#### A. CRTP (curiously recurring template pattern)
+- grandparent layer - all non-polymorphic functions (actually can put into parent layer as well)
+- parent layer - polymorphic layer, take child class as a template parameter
+- child layer - implementation of polymorphic functions
+### XXXI. threads
+- overheads of multithreading
+    - start and stop threads: do not put task into separate thread if it is short in duration compared with the time it takes to start and stop the thread
+    - task switching
+    - synchronize and communicate between threads: cost of semaphore, mutexes is considerable. variable shared between multiple threads also need to be declared `volatile` to prevent load in register
+    - different threads need separate storage
+### XXXII. exceptions and error handling
+- even if no error occurs, the program may have to do a lot of bookkeeping in order to know how to recover in tht event of an exception. the costs largely dependes on the compiler. some compilers have efficient table-based method with little or no overhead while other have inefficient code-based methods or require runtime type identification (RTTI)
+- can use `noexcept` to disable it
+#### A. exceptions and vector code
+- vector instructions are useful for doing multiple calculations in parallel
+- exception handling does not work well with vector code because a single element in a vector may cause an exception while perhaps the other vector elements do not
+- if the code can benefit from vector instructions, then it is better to disable the trapping of exceptions and rely on the propagation of NAN and INF instead.
+#### B. avoiding the cost of exception handling
+#### C. making exception-safe code
+### XXXIII. stack unwinding
+- a mechanism used by exception handlers for cleaning up and calling any necessary destructors after jumping out of a functino in a case of an exception without using the normal return route
+- also used in two other situations
+    - can be used then thread terminated
+    - is also used when the function `longjmp` is used for jumping out of a function. Avoid the use of `longjmp` is possible
+### XXXIV. Propagation of `NAN` and `INF`
+- let it propagate, efficient
+### XXXV. preprocessing directives
+- `#if` can be used for multiple platform/config
+### XXXVI. namespaces
+- no cost
