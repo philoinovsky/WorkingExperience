@@ -480,3 +480,33 @@ x.abc = A | (B << 4) | (C << 6);
 #### A. uncached memory store
 - is advantageous if, and only if, a level 2 cache miss can be expected
 ## Multithreading
+- two main principles
+    - functional decomposition
+    - data decomposition
+- coarse-grained and fine-grained
+    - coarse: llong sequence of operations can be carried out independently
+    - fine: can divide task into subtasks, but impossible to work for very long on a particular subtask before coordination with other subtasks is necessary
+    - out-of-order execution and vector operations are more useful methods for exploiting fine-grained parallelism
+- several ways to divide the workload between multiple CPU cores
+    - define multiple threads and put equal amount work into each thread
+    - automatic parallelization by compiler
+    - OpenMP directives
+    - `std::thread`
+    - function libraries with internal multi-threading
+### I. simultaneous multithreading
+- "hyperthreading": two threads running in the same core will always compete for the same resources, such as cache and execution units
+- situations to use hyperthreading
+    - large fraction of the time goes to cache misses, branch misprediction, or long dependency chains
+- not use
+    - sharing resources are limiting factors
+- can disable hyperthreading by using only even-id processors
+## Out of order execution
+- optimal number of accumulators for floating point addition and multiplication may be three or four, depending on the CPU
+- conditions that make it possible for the CPU to overlap the calculations of loop iterations are
+    - no loop-carried dependency chain
+    - all intermediate results should be saved in registers, not memory. for register renaming
+    - the loop branch should be predicted
+- things you should do
+    - avoid long dependency chains
+    - mix different kinds of operations in order to divide the work evenly between the different execution units of the CPU
+- modern CPU can typically handle more than a hundred pending operations. It may be useful to split a loop in two and store intermediate results in order to break an extremely long dependency chain
