@@ -375,3 +375,46 @@ x.abc = A | (B << 4) | (C << 6);
 ### III. obstacles to optimization by compiler
 - cannot optimize across modules
 - pointer aliasing
+    - can use `__restrict` or `__restrict__` to tell compiler the pointer does not alias anything, but not promised compiler will take the hint
+- dynamic memory allocation
+    - obvious to programmer that pointers to different dynamically allocated objects are not overlapping/aliasing. but compiler usually not able to see that
+- pure functions
+    - declare `__attribute ((const))` to tell compiler this is pure function, can use common subexpression elimination. in the book, only works for gcc
+- virtual functions and function pointer
+    - rarely possible for compiler to predict with certainty which version of a virtual function will be called or what a function pointer points to
+- algebraic reduction
+    - susceptible to problems of overflow and loss precision, especially for floating point
+- floating point induction variables
+    - same reason as algebraic reduction, can do by hand!
+- inlined functions have a non-inlined copy
+    - may be called from another module, the compiler has to make a non-inlined copy of the inlined function for the sake of the possibility that the function is also called from another module
+    - declare `static` if function not used in other modules
+    - for class member function, can put in class definition to force inline. but it may not be optimal (function is big and called in many places)
+    - turn on `/Gy` / `-ffunction-sections` which allows linker to remove unreferenced functions
+### IV. obstacles to optimization by CPU
+- long dependency chains in the code prevent the CPU from doing out-of-order execution
+- prevent long dependency chains, especially loop-carried dependency chains with long latencies
+### V. compiler optimization options
+- one version for debug, one version for release
+- optimizing for size / speed
+- profile-guided optimization
+    - compile with proifile support and optimize accordingly
+- whole program optimization
+    - put all file into one intermediate file (compiler-specific), and optimize
+- can compile multiple `.cpp` files into a single object file, this enables compiler to do cross-module optimizations when interprocedural optimization is enabled. A more primitive, but efficient, way of doing whole program optimization is to join all source files by `#include` and declare all functions static / inline
+- recommended to turn off support for exception handling
+- recommended to turn off RTTI
+- recommended to enable fast floating point calculations / turn off requirements for strict floating point calculations unless the stricness is required
+- recommended to turn on "function level linking"
+- recommended to turn on "assume no pointer aliasing" if no pointer aliasing
+- recommended to use "frame pointer" instead of "standard stack frame" cuz it's used for debugging and exception handling and takes up one register
+### VI. optimization directives
+#### A. keywords that work on all C++ compilers
+`volatile`, `const`, `static`
+#### B. compiler specific keywords
+- 32 bit pass first two params by register - `__fastcall`, `__attribute__((fastcall))`
+- 64 bit pass params / return by floating point register / vector registers `__vectorcall`
+- pure function - `__attribute((const))` (linux only)
+- data alignment - `__declspec(align(16))` or `__attribute__((aligned(16)))`
+### VII. checking what the compiler does
+- look at assembly
