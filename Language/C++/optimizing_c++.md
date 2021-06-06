@@ -418,3 +418,42 @@ x.abc = A | (B << 4) | (C << 6);
 - data alignment - `__declspec(align(16))` or `__attribute__((aligned(16)))`
 ### VII. checking what the compiler does
 - look at assembly
+## optimizing memory access
+### I. caching of code and data
+### II. cache organization
+### III. functions that are used together should be stored together
+### IV. variables that are used together should be stored together
+### V. alignment of data
+- cacheline size is typically 64 bytes
+- `alignas (64) int BigArray[1024]`
+### VI. dynamic memory allocation
+- `new` `delete` `malloc` `free`, 4 use cases dynamically allocate
+    - large array size unknown
+    - total number of objects not known at compiler
+    - text strings and similar objects of variable size can be allocated dynamically
+    - arrays that are too large for the stack can be allocated dynamically
+- advantages
+    - clear program structure
+    - does not allocate more space than needed
+    - useful when no reasonable upper limit to the required amount of memory space can be given in advance
+- disadvantages
+    - takes long time
+    - heap space fragmented
+    - when resized, all need to be copied to new block
+    - gc will start when heap space too fragmented
+    - programmer should make sure allocate/deallocate
+    - programmer should make sure no object is accessed after it has been deallocated
+    - allocated memory may not be optimally aligned
+    - difficult for compiler to optimize code that uses pointer because it cannot rule out aliasing
+    - matrix / multidimensional array is less efficient when row length is not known at compiler time. Extra work needed for calculating row addresses at each process
+- advantages of vector over list
+    - list allocated seperately, allocation, deallocation and gc takes a considerable amount of time
+    - low cache miss rate
+    - list has pointers, takes up more memory
+    - walking through a linked list takes more time because no link pointer can be loaded until previous link pointer has been loaded. this makes a critical dependency chain which prevents out-of-order execution
+- advantages of `alloca` over `new` `delete` `malloc` `free`
+    - little overhead to the allocation process
+    - memory space never becomes fragmented
+    - deallocation has no cost
+    - allocated memory contiguous, which makes data caching efficient
+### VII. data structures and container classes
