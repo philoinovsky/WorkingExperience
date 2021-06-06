@@ -457,3 +457,26 @@ x.abc = A | (B << 4) | (C << 6);
     - deallocation has no cost
     - allocated memory contiguous, which makes data caching efficient
 ### VII. data structures and container classes
+#### A. standard C++ containers
+- `std::array`: normal array
+- `std::vector`: contiguous memory block, grow 50% bigger when full
+- `std::deque`: deque may allocate fewer memory block than linked list, each block can contain multiple elements. Compromise between a linear array and a linked list
+- `std::forward_list`: list
+- `std::list`: doubly linked list
+- `std::stack`: special case of deque
+- `std::set`: ordered list. implemented as red-black tree
+- `std::map`: same as set
+- `std::unordered_set`: hash map
+- `std::unordered_map`: same as unordered set
+#### B. making your own container classes
+-
+### VIII. strings
+- cstrings are usually faster
+### IX. access data sequentially
+### X. cache contentions in large data structures
+- be aware if nos of column is high power of 2
+### XI. explicit cache control
+- `MOVNTI` and so on
+#### A. uncached memory store
+- is advantageous if, and only if, a level 2 cache miss can be expected
+## Multithreading
